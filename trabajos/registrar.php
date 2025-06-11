@@ -16,22 +16,23 @@ if (isset($_POST['guardar'])) {
     $fecha_hora = date('Y-m-d H:i:s');
     $valor_empresa = $valor_cobrado * 0.5;
 
-    if ($cliente_nombre && $empleado_id && $descripcion && $valor_cobrado) {
-        $sql = "INSERT INTO trabajos (
-                    cliente_nombre, empleado_id, fecha_hora, descripcion, valor_cobrado, valor_empresa
-                ) VALUES (
-                    :cliente_nombre, :empleado_id, :fecha_hora, :descripcion, :valor_cobrado, :valor_empresa
-                )";
+   if ($cliente_nombre && $empleado_id && $descripcion && $valor_cobrado) {
+    $sql = "INSERT INTO trabajos (
+                cliente_nombre, empleado_id, fecha_hora, descripcion, valor_cobrado
+            ) VALUES (
+                :cliente_nombre, :empleado_id, :fecha_hora, :descripcion, :valor_cobrado
+            )";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':cliente_nombre' => $cliente_nombre,
-            ':empleado_id' => $empleado_id,
-            ':fecha_hora' => $fecha_hora,
-            ':descripcion' => $descripcion,
-            ':valor_cobrado' => $valor_cobrado,
-            ':valor_empresa' => $valor_empresa
-        ]);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':cliente_nombre' => $cliente_nombre,
+        ':empleado_id' => $empleado_id,
+        ':fecha_hora' => $fecha_hora,
+        ':descripcion' => $descripcion,
+        ':valor_cobrado' => $valor_cobrado
+    ]);
+
+
 
         echo "<script>alert('✅ Trabajo registrado correctamente'); window.location.href='registrar.php';</script>";
         exit();

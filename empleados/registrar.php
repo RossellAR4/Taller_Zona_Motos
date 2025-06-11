@@ -55,7 +55,8 @@ if (isset($_POST['guardar'])) {
             <input type="date" class="form-control" name="fecha_nacimiento" required>
         </div>
         <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
-        <a href="../dashboard.php" class="btn btn-secondary">Volver al menú</a>
+        <a href="index.php" class="btn btn-secondary">Volver al menú</a>
+        
     </form>
 </div>
 </body>

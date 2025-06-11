@@ -2,12 +2,12 @@
 require_once '../conexion.php';
 date_default_timezone_set('America/Tegucigalpa');
 
-// Calcular lunes y sábado de la semana actual
+
 $hoy = date('Y-m-d');
 $lunes = date('Y-m-d', strtotime('monday this week', strtotime($hoy)));
 $sabado = date('Y-m-d', strtotime('saturday this week', strtotime($hoy)));
 
-// Obtener todos los trabajos entre lunes y sábado
+
 $sql = "SELECT 
             e.nombre AS empleado,
             DATE(t.fecha_hora) AS dia,
@@ -22,14 +22,14 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([':lunes' => $lunes, ':sabado' => $sabado]);
 $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Organizar los datos por empleado y día
+
 $empleados = [];
 $dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 $dias_es = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
 foreach ($registros as $fila) {
     $nombre = $fila['empleado'];
-    $dia = date('l', strtotime($fila['dia'])); // Ej: Monday
+    $dia = date('l', strtotime($fila['dia'])); 
     $empleados[$nombre][$dia] = $fila['total_dia'];
 }
 ?>

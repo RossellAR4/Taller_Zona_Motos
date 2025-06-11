@@ -19,7 +19,7 @@ if (!isset($_SESSION['usuario'])) {
 
     <div class="row g-4 justify-content-center">
         <div class="col-md-4">
-            <a href="empleados/registrar.php" class="btn btn-outline-success w-100 py-3">👤 Registrar Empleado</a>
+            <a href="empleados/index.php" class="btn btn-outline-success w-100 py-3">👥 Gestionar Empleados</a>
         </div>
         <div class="col-md-4">
             <a href="trabajos/registrar.php" class="btn btn-outline-primary w-100 py-3">🛠 Registrar Trabajo</a>
@@ -32,6 +32,9 @@ if (!isset($_SESSION['usuario'])) {
         </div>
         <div class="col-md-4">
             <a href="trabajos/vista_semanal.php" class="btn btn-outline-info w-100 py-3">📊 Vista Semanal</a>
+        </div>
+        <div class="col-md-4">
+            <a href="trabajos/vista_mensual.php" class="btn btn-outline-primary w-100 py-3">📆 Vista Mensual</a>
         </div>
         <div class="col-md-4">
             <a href="auth/logout.php" class="btn btn-danger w-100 py-3">🚪 Cerrar sesión</a>
