@@ -25,7 +25,7 @@ if (!isset($_SESSION['usuario'])) {
             <a href="trabajos/registrar.php" class="btn btn-outline-primary w-100 py-3">🛠 Registrar Trabajo</a>
         </div>
         <div class="col-md-4">
-            <a href="vales/registrar.php" class="btn btn-outline-warning w-100 py-3">💵 Registrar Vale</a>
+            <a href="vales/index.php" class="btn btn-outline-warning w-100 py-3">💵 Vales</a>
         </div>
         <div class="col-md-4">
             <a href="trabajos/vista_diaria.php" class="btn btn-outline-dark w-100 py-3">📅 Vista Diaria</a>

@@ -9,9 +9,9 @@ if (!isset($_SESSION['usuario'])) {
 require '../conexion.php';
 
 $hoy = new DateTime();
-$diaSemana = $hoy->format('N'); 
+$diaSemana = $hoy->format('N');
 $lunes = clone $hoy;
-$lunes->modify('-' . ($diaSemana - 1) . ' days'); 
+$lunes->modify('-' . ($diaSemana - 1) . ' days');
 
 $dias = [];
 for ($i = 0; $i < 6; $i++) {
@@ -20,10 +20,9 @@ for ($i = 0; $i < 6; $i++) {
     $dias[] = $dia;
 }
 
-
 $fecha = $_GET['fecha'] ?? $hoy->format('Y-m-d');
 
-
+// Obtener trabajos
 $sql = "
     SELECT 
         e.nombre AS empleado_nombre,
@@ -36,11 +35,11 @@ $sql = "
     WHERE DATE(t.fecha_hora) = :fecha
     ORDER BY e.nombre, t.fecha_hora
 ";
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':fecha' => $fecha]);
 $trabajos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Agrupar por empleado
 $datos_por_empleado = [];
 foreach ($trabajos as $t) {
     $empleado = $t['empleado_nombre'];
@@ -55,6 +54,20 @@ foreach ($trabajos as $t) {
     $datos_por_empleado[$empleado]['total_valor'] += $t['valor_cobrado'];
     $datos_por_empleado[$empleado]['total_empresa'] += $t['valor_empresa'];
 }
+
+// Obtener vales
+$sql_vales = "
+    SELECT 
+        e.nombre AS empleado_nombre,
+        SUM(v.monto) AS total_vales
+    FROM vales v
+    JOIN empleados e ON v.empleado_id = e.id
+    WHERE DATE(v.fecha_hora) = :fecha
+    GROUP BY e.nombre
+";
+$stmt_vales = $pdo->prepare($sql_vales);
+$stmt_vales->execute([':fecha' => $fecha]);
+$vales_por_empleado = $stmt_vales->fetchAll(PDO::FETCH_KEY_PAIR); // nombre => total_vales
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +97,11 @@ foreach ($trabajos as $t) {
     <?php if (empty($datos_por_empleado)): ?>
         <div class="alert alert-info">No hay trabajos registrados para este día.</div>
     <?php else: ?>
-        <?php foreach ($datos_por_empleado as $empleado => $datos): ?>
+        <?php foreach ($datos_por_empleado as $empleado => $datos): 
+            $total_vales = $vales_por_empleado[$empleado] ?? 0;
+            $parte_empleado = $datos['total_valor'] * 0.5;
+            $pago_final = $parte_empleado - $total_vales;
+        ?>
             <div class="card mb-4 shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <strong><?= htmlspecialchars($empleado) ?></strong>
@@ -113,7 +130,15 @@ foreach ($trabajos as $t) {
                             <tr class="table-success">
                                 <th colspan="2">Total por empleado</th>
                                 <th>L.<?= number_format($datos['total_valor'], 2) ?></th>
-                                <th>L.<?= number_format($datos['total_empresa'], 2) ?></th>
+                                <th>L.<?= number_format($parte_empleado, 2) ?> <small>(50%)</small></th>
+                            </tr>
+                            <tr class="table-warning">
+                                <th colspan="3">💵 Vales del día</th>
+                                <th>L.<?= number_format($total_vales, 2) ?></th>
+                            </tr>
+                            <tr class="table-info">
+                                <th colspan="3">💰 Pago neto al empleado</th>
+                                <th>L.<?= number_format($pago_final, 2) ?></th>
                             </tr>
                         </tfoot>
                     </table>

@@ -86,8 +86,8 @@ $total_mes = array_sum(array_column($trabajos, 'valor_cobrado'));
                         <td><?= htmlspecialchars($t['empleado']) ?></td>
                         <td><?= htmlspecialchars($t['cliente_nombre']) ?></td>
                         <td><?= htmlspecialchars($t['descripcion']) ?></td>
-                        <td>$<?= number_format($t['valor_cobrado'], 0, ',', '.') ?></td>
-                        <td>$<?= number_format($t['valor_cobrado'] * 0.5, 0, ',', '.') ?></td>
+                        <td>L.<?= number_format($t['valor_cobrado'], 0, ',', '.') ?></td>
+                        <td>L.<?= number_format($t['valor_cobrado'] * 0.5, 0, ',', '.') ?></td>
                         <td>
                             <a href="verificar_contrasena.php?id=<?= $t['id'] ?>" class="btn btn-sm btn-primary">✏️ Editar</a>
                         </td>
@@ -101,8 +101,8 @@ $total_mes = array_sum(array_column($trabajos, 'valor_cobrado'));
         <tfoot>
             <tr>
                 <th colspan="4" class="text-end">💰 Total del mes:</th>
-                <th>$<?= number_format($total_mes, 0, ',', '.') ?></th>
-                <th>$<?= number_format($total_mes * 0.5, 0, ',', '.') ?> (empresa)</th>
+                <th>L.<?= number_format($total_mes, 0, ',', '.') ?></th>
+                <th>L.<?= number_format($total_mes * 0.5, 0, ',', '.') ?> (empresa)</th>
                 <th></th>
             </tr>
         </tfoot>
