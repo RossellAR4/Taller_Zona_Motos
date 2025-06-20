@@ -13,17 +13,25 @@ if (isset($_POST['guardar'])) {
     $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
 
     if ($nombre && $numero_identidad && $fecha_nacimiento) {
-        $sql = "INSERT INTO empleados (nombre, numero_identidad, fecha_nacimiento) 
-                VALUES (:nombre, :numero_identidad, :fecha_nacimiento)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':nombre' => $nombre,
-            ':numero_identidad' => $numero_identidad,
-            ':fecha_nacimiento' => $fecha_nacimiento
-        ]);
+        try {
+            $sql = "INSERT INTO empleados (nombre, numero_identidad, fecha_nacimiento) 
+                    VALUES (:nombre, :numero_identidad, :fecha_nacimiento)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':nombre' => $nombre,
+                ':numero_identidad' => $numero_identidad,
+                ':fecha_nacimiento' => $fecha_nacimiento
+            ]);
 
-        echo "<script>alert('✅ Empleado registrado correctamente'); window.location.href='registrar.php';</script>";
-        exit();
+            echo "<script>alert('✅ Empleado registrado correctamente'); window.location.href='registrar.php';</script>";
+            exit();
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000 && str_contains($e->getMessage(), 'numero_identidad')) {
+                echo "<script>alert('⚠️ Ya existe un empleado con ese número de identidad'); window.history.back();</script>";
+            } else {
+                echo "<script>alert('❌ Error inesperado: " . $e->getMessage() . "'); window.history.back();</script>";
+            }
+        }
     } else {
         echo "<script>alert('❌ Todos los campos son obligatorios');</script>";
     }
@@ -56,7 +64,6 @@ if (isset($_POST['guardar'])) {
         </div>
         <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
         <a href="index.php" class="btn btn-secondary">Volver al menú</a>
-        
     </form>
 </div>
 </body>

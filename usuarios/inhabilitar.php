@@ -1,0 +1,11 @@
+<?php
+require '../conexion.php';
+
+$id = $_GET['id'] ?? null;
+
+if ($id) {
+    $stmt = $pdo->prepare("UPDATE usuarios SET activo = 0 WHERE id = ?");
+    $stmt->execute([$id]);
+}
+
+header("Location: index.php");

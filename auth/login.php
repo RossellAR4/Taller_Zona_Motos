@@ -1,36 +1,57 @@
 <?php
 session_start();
-if (isset($_SESSION['usuario'])) {
-    header("Location: ../dashboard.php");
-    exit();
+require '../conexion.php'; 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuario = $_POST['usuario'] ?? '';
+    $contraseña = $_POST['contraseña'] ?? '';
+
+    if (empty($usuario) || empty($contraseña)) {
+        echo "<script>alert('Por favor complete todos los campos'); window.location='login.php';</script>";
+        exit();
+    }
+
+    // Buscar usuario en la base de datos
+    $sql = "SELECT * FROM usuarios WHERE usuario = :usuario AND activo = 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['usuario' => $usuario]);
+    $usuarioBD = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($usuarioBD && password_verify($contraseña, $usuarioBD['contraseña'])) {
+        // Guardar datos en sesión
+        $_SESSION['usuario'] = $usuarioBD['usuario'];
+        $_SESSION['rol'] = $usuarioBD['rol'];  // 1=admin, 2=cajero
+
+        header("Location: ../dashboard.php");
+        exit();
+    } else {
+        echo "<script>alert('Usuario o contraseña incorrectos'); window.location='login.php';</script>";
+        exit();
+    }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Taller de Motos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <title>Login - Taller Zona Motos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <h4 class="text-center mb-3">Iniciar sesión</h4>
-            <form method="POST" action="procesar_login.php">
-                <div class="mb-3">
-                    <label>Usuario</label>
-                    <input type="text" name="usuario" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>Contraseña</label>
-                    <input type="password" name="contraseña" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-            </form>
+<div class="container mt-5" style="max-width: 400px;">
+    <h3 class="mb-4 text-center">Iniciar Sesión</h3>
+    <form method="POST" action="">
+        <div class="mb-3">
+            <label for="usuario" class="form-label">Usuario</label>
+            <input type="text" id="usuario" name="usuario" class="form-control" required autofocus />
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="contraseña" class="form-label">Contraseña</label>
+            <input type="password" id="contraseña" name="contraseña" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+    </form>
 </div>
 </body>
 </html>

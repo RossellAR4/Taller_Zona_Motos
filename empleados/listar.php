@@ -1,7 +1,7 @@
 <?php
 require '../conexion.php';
 
-$stmt = $pdo->query("SELECT * FROM empleados");
+$stmt = $pdo->query("SELECT * FROM empleados WHERE activo = 1");
 $empleados = $stmt->fetchAll();
 ?>
 
@@ -37,7 +37,7 @@ $empleados = $stmt->fetchAll();
                     <td><?= $empleado['fecha_nacimiento'] ?></td>
                     <td>
                         <a href="editar.php?id=<?= $empleado['id'] ?>" class="btn btn-sm btn-primary">✏️ Editar</a>
-                        <a href="eliminar.php?id=<?= $empleado['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este empleado?');">🗑 Eliminar</a>
+                        <a href="inhabilitar.php?id=<?= $empleado['id'] ?>" class="btn btn-warning btn-sm">🚫 Inhabilitar</a>
                     </td>
                 </tr>
             <?php endforeach ?>

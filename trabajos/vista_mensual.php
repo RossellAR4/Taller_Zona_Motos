@@ -7,10 +7,18 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+// Lista de meses en español
+$meses_es = [
+    1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+    5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+    9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+];
 
 $mes = $_GET['mes'] ?? date('m');
 $anio = $_GET['anio'] ?? date('Y');
 
+$mes_num = intval($mes); // Para obtener el nombre del mes en español
+$mes_nombre = $meses_es[$mes_num] ?? '';
 
 $stmt = $pdo->prepare("
     SELECT t.*, e.nombre AS empleado
@@ -21,7 +29,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$mes, $anio]);
 $trabajos = $stmt->fetchAll();
-
 
 $total_mes = array_sum(array_column($trabajos, 'valor_cobrado'));
 ?>
@@ -35,8 +42,7 @@ $total_mes = array_sum(array_column($trabajos, 'valor_cobrado'));
 </head>
 <body class="bg-light">
 <div class="container mt-4">
-    <h3 class="mb-4 text-center">📅 Vista Mensual de Trabajos</h3>
-
+    <h3 class="mb-4 text-center">📅 Vista Mensual de Trabajos - <?= $mes_nombre ?> <?= $anio ?></h3>
 
     <form class="row g-2 mb-4" method="get">
         <div class="col-md-3">
@@ -44,7 +50,8 @@ $total_mes = array_sum(array_column($trabajos, 'valor_cobrado'));
                 <?php
                 for ($m = 1; $m <= 12; $m++) {
                     $m_val = str_pad($m, 2, '0', STR_PAD_LEFT);
-                    echo "<option value='$m_val'" . ($mes == $m_val ? ' selected' : '') . ">" . date("F", mktime(0, 0, 0, $m)) . "</option>";
+                    $nombre_mes = $meses_es[$m];
+                    echo "<option value='$m_val'" . ($mes == $m_val ? ' selected' : '') . ">$nombre_mes</option>";
                 }
                 ?>
             </select>
