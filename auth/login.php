@@ -11,16 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Buscar usuario en la base de datos
+    
     $sql = "SELECT * FROM usuarios WHERE usuario = :usuario AND activo = 1";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['usuario' => $usuario]);
     $usuarioBD = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($usuarioBD && password_verify($contraseña, $usuarioBD['contraseña'])) {
-        // Guardar datos en sesión
+
         $_SESSION['usuario'] = $usuarioBD['usuario'];
-        $_SESSION['rol'] = $usuarioBD['rol'];  // 1=admin, 2=cajero
+        $_SESSION['rol'] = $usuarioBD['rol'];  
 
         header("Location: ../dashboard.php");
         exit();
