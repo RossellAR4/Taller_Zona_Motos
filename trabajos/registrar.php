@@ -13,26 +13,25 @@ if (isset($_POST['guardar'])) {
     $empleado_id = $_POST['empleado_id'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
     $valor_cobrado = $_POST['valor_cobrado'] ?? '';
-    $fecha_hora = date('Y-m-d H:i:s');
-    $valor_empresa = $valor_cobrado * 0.5;
+    $fecha_seleccionada = $_POST['fecha'] ?? date('Y-m-d');
+    $hora_actual = date('H:i:s');
+    $fecha_hora = $fecha_seleccionada . ' ' . $hora_actual;
 
-   if ($cliente_nombre && $empleado_id && $descripcion && $valor_cobrado) {
-    $sql = "INSERT INTO trabajos (
-                cliente_nombre, empleado_id, fecha_hora, descripcion, valor_cobrado
-            ) VALUES (
-                :cliente_nombre, :empleado_id, :fecha_hora, :descripcion, :valor_cobrado
-            )";
+    if ($cliente_nombre && $empleado_id && $descripcion && $valor_cobrado) {
+        $sql = "INSERT INTO trabajos (
+                    cliente_nombre, empleado_id, fecha_hora, descripcion, valor_cobrado
+                ) VALUES (
+                    :cliente_nombre, :empleado_id, :fecha_hora, :descripcion, :valor_cobrado
+                )";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':cliente_nombre' => $cliente_nombre,
-        ':empleado_id' => $empleado_id,
-        ':fecha_hora' => $fecha_hora,
-        ':descripcion' => $descripcion,
-        ':valor_cobrado' => $valor_cobrado
-    ]);
-
-
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':cliente_nombre' => $cliente_nombre,
+            ':empleado_id' => $empleado_id,
+            ':fecha_hora' => $fecha_hora,
+            ':descripcion' => $descripcion,
+            ':valor_cobrado' => $valor_cobrado
+        ]);
 
         echo "<script>alert('✅ Trabajo registrado correctamente'); window.location.href='registrar.php';</script>";
         exit();
@@ -41,8 +40,7 @@ if (isset($_POST['guardar'])) {
     }
 }
 
-
-$empleados = $pdo->query("SELECT id, nombre FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
+$empleados = $pdo->query("SELECT id, nombre FROM empleados WHERE activo = 1")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -70,6 +68,11 @@ $empleados = $pdo->query("SELECT id, nombre FROM empleados")->fetchAll(PDO::FETC
                     <option value="<?= $empleado['id'] ?>"><?= htmlspecialchars($empleado['nombre']) ?></option>
                 <?php endforeach; ?>
             </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha del trabajo</label>
+            <input type="date" class="form-control" name="fecha" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" required>
         </div>
 
         <div class="mb-3">
